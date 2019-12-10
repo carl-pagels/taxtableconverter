@@ -8,6 +8,8 @@ The file name should only be the tax table number, e.g. 29.csv, 30.csv etc.
 
 2. Change variables in file to matching information.
 
+3. Run the main class
+
 ISSUE = Jira issue number, e.g. NGL209
 
 YEAR = year which this tax table belongs to, e.g. 2020
