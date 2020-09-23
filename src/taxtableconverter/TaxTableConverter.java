@@ -1,9 +1,11 @@
+package taxtableconverter;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class Main {
+public class TaxTableConverter {
 
     private static final String ISSUE = "NGL209";
     private static final String YEAR = "2020";
@@ -25,11 +27,10 @@ public class Main {
 
     private static void createLiquibaseFile(String pathName, int taxTable) throws IOException {
         File inputFile = new File(pathName);
-        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+        BufferedReader reader = new BufferedReader(new FileReader("sample.csv"));
         StringBuilder liquibaseScript = new StringBuilder(getHeaderString(taxTable));
         liquibaseScript.append(getInsertStatement());
-        String line;
-        while ((line = reader.readLine()) != null) {
+        for (String line; (line = reader.readLine()) != null;) {
             final String taxInformation = processLine(line, taxTable);
             if (!taxInformation.isEmpty()) {
                 liquibaseScript.append(taxInformation);
