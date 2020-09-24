@@ -13,7 +13,7 @@ public class Utils {
      */
     static String getValue(String[] values, int index) {
         String value = "";
-        if (values.length > index && index > 0) {
+        if (values.length > index && index >= 0) {
             value = values[index];
         }
         return value;

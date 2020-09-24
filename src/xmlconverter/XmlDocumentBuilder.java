@@ -6,7 +6,10 @@ import org.w3c.dom.Element;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 
 public class XmlDocumentBuilder {
@@ -23,15 +26,14 @@ public class XmlDocumentBuilder {
             docFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             document = docFactory.newDocumentBuilder().newDocument();
 
-            Element root = document.createElement("Xmlconverter");
+            Element root = document.createElement("Root");
             document.appendChild(root);
 
-            appendNodes(document, new CSVData(reader), root);
+            return appendNodes(document, new CSVData(reader), root);
         }
-        return document;
     }
 
-    static void appendNodes(Document document, CSVData csvData, Element root) {
+    static Document appendNodes(Document document, CSVData csvData, Element root) {
         final String[] categories = csvData.getCategories();
         final List<String> lines = csvData.getLines();
         // Start on 1 to avoid category line
@@ -44,10 +46,12 @@ public class XmlDocumentBuilder {
                 if (category.isEmpty()) {
                     continue;
                 }
-                row.appendChild(createCategoryElement(document, category, Utils.getValue(values, i)));
+                final Element categoryElement = createCategoryElement(document, category, Utils.getValue(values, i));
+                row.appendChild(categoryElement);
                 root.appendChild(row);
             }
         }
+        return document;
     }
 
     static Element createCategoryElement(Document doc, String category, String value) {
