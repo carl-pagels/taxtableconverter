@@ -10,8 +10,7 @@ import java.io.IOException;
 
 public class XmlConverterTest {
 
-
-    private final String PATH = "/Users/carl.pagels/repos/taxtableconverter/src/xmlconverter/data";
+    private static final String PATH = "/Users/carl.pagels/repos/taxtableconverter/src/xmlconverter/data";
 
     @Test
     public void testFileGeneration_Hej() throws IOException, ParserConfigurationException, TransformerException {

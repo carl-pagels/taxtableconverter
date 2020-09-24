@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class XmlConverter {
 
-    private static final String FILE_PATH = "/Users/carl.pagels/repos/taxtableconverter/src/xmlconverter/data";
+    private static final String FILE_PATH = "src/xmlconverter/data";
     private static final String FILE_NAME = "hej.csv";
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, TransformerException {
