@@ -34,17 +34,17 @@ public class XmlDocumentBuilder {
     static void appendNodes(Document document, CSVData csvData, Element root) {
         final String[] categories = csvData.getCategories();
         final List<String> lines = csvData.getLines();
-        for (int line = 1; line < lines.size(); line++) {
+        // Start on 1 to avoid category line
+        for (int lineIndex = 1; lineIndex < lines.size(); lineIndex++) {
             // One tag named row for each line in csv file
             Element row = document.createElement("row");
-            final String[] values = lines.get(line).split(",");
+            final String[] values = lines.get(lineIndex).split(",");
             for (int i = 0; i < categories.length; i++) {
                 final String category = categories[i];
                 if (category.isEmpty()) {
                     continue;
                 }
-                final Element categoryElement = createCategoryElement(document, category, Utils.getValue(values, i));
-                row.appendChild(categoryElement);
+                row.appendChild(createCategoryElement(document, category, Utils.getValue(values, i)));
                 root.appendChild(row);
             }
         }
