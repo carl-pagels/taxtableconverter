@@ -16,14 +16,14 @@ public class XmlConverterTest {
     @Test
     public void testFileGeneration_Hej() throws IOException, ParserConfigurationException, TransformerException {
         final Document document = XmlDocumentBuilder.generateDocument(PATH, "hej.csv");
-        final String xmlFile = XmlGenerator.getXmlFile(document);
+        final String xmlFile = FileGenerator.getXmlFile(document);
         Assertions.assertEquals(xmlFile, EXPECTED_XML_HEJ);
     }
 
     @Test
     public void testFileGeneration_Cities() throws IOException, ParserConfigurationException, TransformerException {
         final Document document = XmlDocumentBuilder.generateDocument(PATH, "cities.csv");
-        final String xmlFile = XmlGenerator.getXmlFile(document);
+        final String xmlFile = FileGenerator.getXmlFile(document);
         Assertions.assertEquals(xmlFile, EXPECTED_XML_CITIES);
     }
 

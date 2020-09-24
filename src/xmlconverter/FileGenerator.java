@@ -14,9 +14,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 
-public class XmlGenerator {
+public class FileGenerator {
 
-    private XmlGenerator() {
+    private FileGenerator() {
         throw new IllegalStateException("Util class, not to be initialized");
     }
 
