@@ -1,0 +1,41 @@
+package xmlconverter;
+
+import org.w3c.dom.Document;
+
+import javax.xml.XMLConstants;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+
+public class XmlGenerator {
+
+    private XmlGenerator() {
+        throw new IllegalStateException("Util class, not to be initialized");
+    }
+
+    static void generateXMlFile(Document document) throws TransformerException, IOException {
+        File file = new File("generated.xml");
+        try (FileWriter fileWriter = new FileWriter(file)) {
+            fileWriter.write(getXmlFile(document));
+        }
+    }
+
+    static String getXmlFile(Document document) throws TransformerException {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        tf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        Transformer transformer = tf.newTransformer();
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(document), new StreamResult(writer));
+
+        return writer.getBuffer().toString();
+    }
+
+}
