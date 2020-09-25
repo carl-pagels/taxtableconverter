@@ -1,5 +1,6 @@
-package xmlconverter;
+package xmlconverter.generator;
 
+import xmlconverter.ui.UIFrame;
 import org.w3c.dom.Document;
 
 import javax.xml.XMLConstants;
@@ -20,13 +21,24 @@ public class FileGenerator {
         throw new IllegalStateException("Util class, not to be initialized");
     }
 
-    static void generateXMlFile(Document document) throws TransformerException, IOException {
-        File file = new File("generated.xml");
+    /**
+     * Method that creates the actual new XML file to your drive
+     * @param document The document to genereate a file for
+     * @param uiFrame The UI
+     */
+    static void generateXMlFile(Document document, UIFrame uiFrame) throws TransformerException, IOException {
+        File file = new File(uiFrame.getSavePath());
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(getXmlFile(document));
+            uiFrame.displaySuccess();
         }
     }
 
+    /**
+     *
+     * @param document the document to create xml string from
+     * @return string representing the document
+     */
     static String getXmlFile(Document document) throws TransformerException {
         TransformerFactory tf = TransformerFactory.newInstance();
         tf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);

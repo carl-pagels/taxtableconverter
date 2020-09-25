@@ -1,4 +1,4 @@
-package xmlconverter;
+package xmlconverter.generator;
 
 import java.io.BufferedReader;
 import java.util.List;
@@ -23,6 +23,7 @@ public class CSVData {
 
     /**
      * Assumes that the first line is the columns. Filter out illegal characters for xml files
+     * Hopefully that's all illegal characters - If not, there will be errors
      * @param line The initial line to get categories from
      * @return with illegal characters escaped
      */
@@ -34,6 +35,7 @@ public class CSVData {
                 .replace("(", "_x0028_")
                 .replace(")", "_x0029_")
                 .replace("?", "")
+                .replace(".", "")
                 .split(",");
     }
 }

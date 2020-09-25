@@ -1,4 +1,4 @@
-package xmlconverter;
+package xmlconverter.generator;
 
 import org.junit.jupiter.api.Test;
 
