@@ -34,6 +34,7 @@ public class XmlDocumentBuilder {
         }
         return document;
     }
+
     /**
      * Creating the rows and split the lines on "," to make categories on every item
      * @param document The document to append rows to

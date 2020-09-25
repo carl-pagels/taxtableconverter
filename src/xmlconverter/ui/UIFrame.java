@@ -56,7 +56,7 @@ public class UIFrame extends JFrame implements ActionListener {
      * @param components All components to add
      */
     private void addComponents(JComponent... components) {
-        for(JComponent component : components) {
+        for (JComponent component : components) {
             add(component);
         }
     }
@@ -66,11 +66,11 @@ public class UIFrame extends JFrame implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent action) {
-
         if (exitButton.equals(action.getSource())) {
             // User clicked Exit in the menu - Closing program
             System.exit(0);
         }
+
         if (loadFileButton.equals(action.getSource())) {
             loadFile();
         } else if (doConversionButton.equals(action.getSource())) {

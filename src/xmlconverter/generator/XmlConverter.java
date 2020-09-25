@@ -20,5 +20,4 @@ public class XmlConverter {
         Document document = XmlDocumentBuilder.generateDocument(uiFrame.getFilePath());
         FileGenerator.generateXMlFile(document, uiFrame);
     }
-
 }

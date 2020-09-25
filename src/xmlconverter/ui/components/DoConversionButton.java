@@ -12,6 +12,5 @@ public class DoConversionButton extends JButton {
         this.setBounds(0, 175, 300, 50);
         this.setEnabled(false);
         this.addActionListener(uiFrame);
-
     }
 }
