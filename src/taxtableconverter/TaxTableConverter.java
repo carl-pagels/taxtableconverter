@@ -7,11 +7,11 @@ import java.util.List;
 
 public class TaxTableConverter {
 
-    private static final String ISSUE = "NGL209";
-    private static final String YEAR = "2020";
+    private static final String ISSUE = "NGL732";
+    private static final String YEAR = "2021";
     private static final String AUTHOR_NAME = "Pagels";
-    private static final String REPO_PATH = "/Users/carl.pagels/repos/salary";
-    private static final String TAX_TABLE_PATH = "/Users/carl.pagels/Documents";
+    private static final String REPO_PATH = "/Users/carlpagels/repos/payroll";
+    private static final String TAX_TABLE_PATH = "/Users/carlpagels/Documents/taxtables";
 
     public static void main(String[] args) throws IOException {
         createFile();
@@ -22,44 +22,53 @@ public class TaxTableConverter {
             final String pathName = String.format("%s/%s.csv", TAX_TABLE_PATH, taxTable);
             createLiquibaseFile(pathName, taxTable);
         }
-        addMigrations();
+        addMigrations("column1");
+        addMigrations("column3");
+    }
+    private static void createLiquibaseFile(String pathName, int taxTable) throws IOException {
+        createColumn(taxTable, pathName, 2, "column1");
+        createColumn(taxTable, pathName, 4, "column3");
     }
 
-    private static void createLiquibaseFile(String pathName, int taxTable) throws IOException {
-        File inputFile = new File(pathName);
-        BufferedReader reader = new BufferedReader(new FileReader("sample.csv"));
-        StringBuilder liquibaseScript = new StringBuilder(getHeaderString(taxTable));
-        liquibaseScript.append(getInsertStatement());
+    private static void createColumn(int taxTable, String pathName, int column, String columnName) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(pathName));
+        StringBuilder liquibaseFile = new StringBuilder(getHeaderString(taxTable, columnName));
+
+        String insertStatement = getInsertStatementColumn1();
+        if (column == 4) {
+            insertStatement = getInsertStatementColumn3();
+        }
+        liquibaseFile.append(insertStatement);
         for (String line; (line = reader.readLine()) != null;) {
-            final String taxInformation = processLine(line, taxTable);
+            final String taxInformation = processLine(line, taxTable, column);
             if (!taxInformation.isEmpty()) {
-                liquibaseScript.append(taxInformation);
+                liquibaseFile.append(taxInformation);
             }
         }
-        liquibaseScript.deleteCharAt(liquibaseScript.length() - 2);
-        liquibaseScript.append(getFooter());
-        writeToFile(taxTable, liquibaseScript);
+        liquibaseFile.deleteCharAt(liquibaseFile.length() - 2);
+        liquibaseFile.append(getFooter());
+        writeToFile(taxTable, liquibaseFile, columnName);
     }
 
-    private static void writeToFile(int taxTable, StringBuilder liquibaseScript) throws IOException {
-        File directory = new File(String.format("%s/impl/src/main/resources/migrations/taxTableData_%s", REPO_PATH, YEAR));
-        if(!directory.exists()) {
+    private static void writeToFile(int taxTable, StringBuilder liquibaseScript, String columnName) throws IOException {
+        File directory = new File(String.format("%s/impl/src/main/resources/migrations/taxTableData_%s_%s", REPO_PATH, YEAR, columnName));
+        if (!directory.exists()) {
             directory.mkdir();
         }
-        String outputFilePath = String.format("%s/impl/src/main/resources/migrations/taxTableData_%s/%s_%s.xml", REPO_PATH, YEAR, ISSUE, taxTable);
+        String outputFilePath = String.format("%s/impl/src/main/resources/migrations/taxTableData_%s_%s/%s_%s_%s.xml", REPO_PATH, YEAR, columnName, ISSUE, columnName, taxTable);
         FileOutputStream outputStream = new FileOutputStream(outputFilePath);
         outputStream.write(liquibaseScript.toString().getBytes());
         outputStream.close();
     }
 
-    private static String processLine(String line, int taxTable) {
+    private static String processLine(String line, int taxTable, int column) {
         line = line.replace(" - ", ";");
         line = line.replace(" ", ";");
         if (!line.matches(".*[a-zA-Z]+.*") && !line.contains("%")) {
             String[] columns = line.split(";");
             String minGross = columns[0];
             String maxGross = columns[1];
-            String taxAmount = columns[2];
+            String taxAmount = columns[column];
             String taxPercent = "null";
             int minNet;
             int maxNet;
@@ -90,23 +99,28 @@ public class TaxTableConverter {
                 "</databaseChangeLog>";
     }
 
-    private static String getInsertStatement() {
+    private static String getInsertStatementColumn1() {
         return "            INSERT into TAX_RATES (income_year, tax_table, min_gross, max_gross, min_net, max_net, " +
                 "tax_amount, tax_percent)\n            VALUES\n";
     }
 
-    private static String getHeaderString(int taxTable) {
+    private static String getInsertStatementColumn3() {
+        return "            INSERT into TAX_RATES_COLUMN_3 (income_year, tax_table, min_gross, max_gross, min_net, max_net, " +
+                "tax_amount, tax_percent)\n            VALUES\n";
+    }
+
+    private static String getHeaderString(int taxTable, String columnName) {
         return String.format("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<databaseChangeLog xmlns=\"http://www.liquibase.org/xml/ns/dbchangelog\"\n" +
                 "                   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
                 "                   xsi:schemaLocation=\"http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd\">\n" +
-                "    <changeSet id=\"add_taxdata_table%s_%s\" author=\"%s\">\n" +
-                "        <sql>\n", taxTable, YEAR, AUTHOR_NAME);
+                "    <changeSet id=\"add_taxdata_table%s_%s_%s\" author=\"%s\">\n" +
+                "        <sql>\n", taxTable, YEAR, columnName, AUTHOR_NAME);
     }
 
-    private static void addMigrations() throws IOException {
+    private static void addMigrations(String columnName) throws IOException {
         String migrationFilePath = String.format("%s/impl/src/main/resources/migrations.xml", REPO_PATH);
-        final String migrationText = String.format("    <includeAll path=\"migrations/taxTableData_%s\"/>", YEAR);
+        final String migrationText = String.format("    <includeAll path=\"migrations/taxTableData_%s_%s\"/>", YEAR, columnName);
         List<String> list = Files.readAllLines(Paths.get(migrationFilePath));
         list.add(list.size() - 1, migrationText);
         Files.write(Paths.get(migrationFilePath), list);
